@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= votingData.name %> control panel
+    </title>
+    <link rel="stylesheet" href="/main.css">
+    <script src="/navigation.js" defer></script>
+</head>
+
+<body>
+    <div id="mainDiv">
+        <div id="topbar">
+            <h3 id="pageName">
+                <%= votingData.name %> control panel
+            </h3>
+            <div id="loggedInAs">
+                <img class="avatar"
+                    src="https://cdn.discordapp.com/avatars/<%= discordData.id %>/<%= discordData.avatar %>.png" alt="">
+                <%= discordData.username %>#<%= discordData.discriminator %> <a href="/logout">Log out</a>
+            </div>
+        </div>
+
+        <div id="mainContent">
+            <nav>
+                <ul>
+                    <li><button>Info</button></li>
+                    <li><button>Results</button></li>
+                    <li><button>Design</button></li>
+                    <li><button>Voting options</button></li>
+                    <li><button>Televoting</button></li>
+                    <li><button>Jury Voting</button></li>
+                    <li><button>API</button></li>
+                </ul>
+            </nav>
+            <div id="content">
+
+                <div id="p_info">
+                    <h1>Info</h1>
+                    <p>Your televoting is available at: <a
+                            href="<%= protocol %>://<%= domain %>/<%= votingData.roesc %>/<%= votingData.link %>">
+                            <%= domain %>/<%= votingData.roesc %>/<%= votingData.link %>
+                        </a>
+                    </p>
+                    <p>Your jury voting is available at: <a
+                            href="<%= protocol %>://<%= domain %>/<%= votingData.roesc %>/<%= votingData.link %>/jury">
+                            <%= domain %>/<%= votingData.roesc %>/<%= votingData.link %>/jury
+                        </a></p>
+                    <p>This page is available at: <a
+                            href="<%= protocol %>://<%= domain %>/manage/<%= votingData.roesc %>/<%= votingData.link %>/">
+                            <%= domain %>/manage/<%= votingData.roesc %>/<%= votingData.link %>/
+                        </a></p>
+                    <p>Alternatively you can go to: <a href="<%= protocol %>://<%= domain %>/manage">
+                            <%= domain %>/manage
+                        </a></p>
+                </div>
+
+                <div id="p_results">
+                    <h1>Results</h1>
+                    <button onclick="resultsOneToOne()">1:1</button> <button
+                        onclick="resultsFiftyFifty()">50/50</button>
+                    <table id="resultsTable"></table>
+                    <h1>All televotes</h1>
+                    <table id="allTelevotes">
+                        <tr>
+                            <td>#</td>
+                            <td>Roblox name</td>
+                            <td>Discord name</td>
+                            <td>Platform</td>
+                            <td>Device</td>
+                            <td>Votes</td>
+                        </tr>
+                    </table>
+                    <h1>All jury votes</h1>
+                    <table id="allJuryVotes">
+                        <tr>
+                            <td>#</td>
+                            <td>Roblox name</td>
+                            <td>Discord name</td>
+                            <td id="juryVotingCountryLabel">Country</td>
+                            <td>Votes</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div id="p_design">
+                    <h1>Design</h1>
+                    <form action="/api/voting-manage/change_design_settings" method="POST">
+                        <input type="hidden" name="roesc" value="<%= votingData.roesc %>">
+                        <input type="hidden" name="voting" value="<%= votingData.link %>">
+                        <table class="form">
+                            <tr>
+                                <td><label for="bgcolor">Background color: </label></td>
+                                <td><input type="color" name="bgcolor"
+                                        value="<%= votingData.designOptions.background.color %>"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="bgimage">Background image: </label></td>
+                                <td><input type="url" name="bgimage"
+                                        value="<%= votingData.designOptions.background.image %>"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="fontcolor">Font color: </label></td>
+                                <td><input type="color" name="fontcolor"
+                                        value="<%= votingData.designOptions.main_window.font_color %>"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="mainbgcolor">Main window background color: </label></td>
+                                <td><input type="color" name="mainbgcolor"
+                                        value="<%= votingData.designOptions.main_window.background_color %>"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="buttonfontcolor">Button font color: </label></td>
+                                <td><input type="color" name="buttonfontcolor"
+                                        value="<%= votingData.designOptions.main_window.button_font_color %>"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="buttonbgcolor">Button background color: </label></td>
+                                <td><input type="color" name="buttonbgcolor"
+                                        value="<%= votingData.designOptions.main_window.button_background_color %>">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="optionbgcolor">Voting option background color: </label></td>
+                                <td><input type="color" name="optionbgcolor"
+                                        value="<%= votingData.designOptions.option.background_color %>"></td>
+                            </tr>
+                        </table>
+                        <button type="submit">Apply changes</button>
+                    </form>
+                </div>
+
+                <div id="p_voting_options">
+                    <h1>Voting Options</h1>
+                    <div id="votingOptions">
+                        <% votingData.votingOptions.forEach((votingOption,i)=> { %>
+                            <input class="votingOption" votingOption="<%= i %>" type="text"
+                                value="<%= votingOption.name %>" placeholder="Name">
+                            <input type="url" id="votingOptionUrl-<%= i %>" value="<%= votingOption.image %>"
+                                placeholder="Image URL"><br>
+                            <% }) %>
+                    </div>
+                    <button onclick="addNewVotingOption()">Add new</button>
+                    <button onclick="changeVotingOptions()">Save</button>
+                </div>
+
+                <div id="p_televoting">
+                    <h1>Televoting</h1>
+                    <form action="/api/voting-manage/change_televoting_options" method="POST">
+                        <input type="hidden" name="roesc" value="<%= votingData.roesc %>">
+                        <input type="hidden" name="voting" value="<%= votingData.link %>">
+                        <table class="form">
+                            <tr>
+                                <td><label for="open">Televoting open: </label></td>
+                                <td><input type="checkbox" name="open" <% if (votingData.televotingSettings.open) { %>
+                                    checked="checked" <% } %>></td>
+                            </tr>
+                            <tr>
+                                <td><label for="minvote">Minimum vote for: </label></td>
+                                <td><input type="number" name="minvote"
+                                        value="<%= votingData.televotingSettings.minVote %>"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="maxvote">Maximum vote for: </label></td>
+                                <td><input type="number" name="maxvote"
+                                        value="<%= votingData.televotingSettings.maxVote %>"></td>
+                            </tr>
+                        </table>
+                        <button type="submit">Apply changes</button>
+                    </form>
+                </div>
+
+                <div id="p_jury_voting">
+                    <h1>Jury Voting</h1>
+                    <form action="/api/voting-manage/change_jury_voting_options" method="POST">
+                        <input type="hidden" name="roesc" value="<%= votingData.roesc %>">
+                        <input type="hidden" name="voting" value="<%= votingData.link %>">
+                        <table class="form">
+                            <tr>
+                                <td><label for="open">Voting open: </label></td>
+                                <td><input type="checkbox" name="open" <% if (votingData.juryVotingSettings.open) { %>
+                                    checked="checked" <% } %>></td>
+                            </tr>
+                        </table>
+                        <button type="submit">Save</button>
+                    </form>
+
+                    <h1>Points</h1>
+                    <div id="juryVotingPointOptions">
+                        <% votingData.juryVotingSettings.points.forEach(point=> { %>
+                            <input type="number" placeholder="Points" value="<%= point %>"
+                                class="smallinput juryVotingPointOption">
+                            <% }) %>
+                    </div>
+                    <button onclick="addNewJuryPointOption()">Add new</button> <button
+                        onclick="saveJuryPointOptions()">Save</button>
+
+                    <h1>Juries</h1>
+                    <ul class="defaultul">
+                        <% votingData.juries.forEach(jury=> { %>
+                            <li>
+                                <%= jury.username || "-" %> (<%=jury.id || "---" %>) <a class="red abutton smallabutton"
+                                            onclick='removeJury("<%= jury.id %>")'>X</a>
+                            </li>
+                            <% }) %>
+                    </ul>
+                    <h3>Add a jury by their Discord username</h3>
+                    <form action="/api/voting-manage/add_jury_by_username" method="POST">
+                        <input type="hidden" name="roesc" value="<%= votingData.roesc %>">
+                        <input type="hidden" name="voting" value="<%= votingData.link %>">
+                        <label for="username">Username: </label> <input style="text-align: right;" type="text"
+                            name="username">#<input type="number" class="smallinput" name="discriminator"><br>
+                        <button type="submit">Add</button>
+                    </form>
+                    <h3>Or their Discord id</h3>
+                    <form action="/api/voting-manage/add_jury_by_id" method="POST">
+                        <input type="hidden" name="roesc" value="<%= votingData.roesc %>">
+                        <input type="hidden" name="voting" value="<%= votingData.link %>">
+                        <label for="id">ID: </label> <input type="number" name="id"><br>
+                        <button type="submit">Add</button>
+                    </form>
+                    <h3>Or select them from the list below</h3>
+                    <button id="loadJuryListButton" onclick="loadListForJury()">Load the list</button>
+                    <div id="allJuriesChooser"></div>
+                    <button id="submitJuryList" style="display: none;" onclick="saveJuriesFromList()">Apply</button>
+                </div>
+                <div id="p_api">
+                    <h1>API</h1>
+                    <p>Your api key: <input type="text" disabled value="<%= votingData.apiKey %>"></p>
+                    <button onclick="regenerateApiKey()">Regenerate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const televotes = JSON.parse(`<%- JSON.stringify(televotes) %>`)
+        const juryvotes = JSON.parse(`<%- JSON.stringify(juryvotes) %>`)
+        const votingOptions = JSON.parse(`<%- JSON.stringify(votingData.votingOptions) %>`)
+        const juries = JSON.parse(`<%- JSON.stringify(votingData.juries) %>`)
+        const results = []
+        let totalTelevotes = 0;
+        let lastSortMethod = "total"
+        let totalTelePoints = 0;
+        let totalJuryPoints = 0;
+
+        votingOptions.forEach(element => {
+            results.push({ name: element.name, tele: 0, jury: 0, showTele: 0, showJury: 0 })
+        })
+
+        function addTelevote(data) {
+            totalTelevotes += 1
+            totalTelePoints += data.votes.length
+            const tr = document.createElement("tr")
+
+            const td = document.createElement("td")
+            td.innerText = totalTelevotes
+            tr.appendChild(td)
+
+            const td1 = document.createElement("td")
+            td1.innerText = data.robloxName
+            tr.appendChild(td1)
+
+            const td2 = document.createElement("td")
+            td2.innerText = data.discordName
+            tr.appendChild(td2)
+
+            const td3 = document.createElement("td")
+            td3.innerText = data.platform
+            tr.appendChild(td3)
+
+            const td4 = document.createElement("td")
+            td4.innerText = data.device
+            tr.appendChild(td4)
+
+            const td5 = document.createElement("td")
+            td5.innerText = data.votes.join(", ")
+            tr.appendChild(td5)
+
+            document.getElementById("allTelevotes").appendChild(tr)
+        }
+
+        televotes.forEach(element => {
+            element.votes.forEach(vote => {
+                results.find(r => r.name.toLowerCase() === vote.toLowerCase()).tele += 1
+                results.find(r => r.name.toLowerCase() === vote.toLowerCase()).showTele += 1
+            })
+            addTelevote(element)
+        })
+
+        let countryLabelVisible = true;
+        if (!juryvotes.find(r => r.country !== "")) {
+            document.getElementById("juryVotingCountryLabel").style.display = "none"
+            countryLabelVisible = false
+        }
+
+        juryvotes.forEach((juryvote, i) => {
+            juryvote.points.forEach(point => {
+                results.find(r => r.name.toLowerCase() === point.name.toLowerCase()).jury += point.points
+                totalJuryPoints += point.points
+            })
+
+            const tr = document.createElement("tr")
+
+            const td = document.createElement("td")
+            td.innerText = i + 1
+            tr.appendChild(td)
+
+            const td1 = document.createElement("td")
+            td1.innerText = juryvote.robloxName
+            tr.appendChild(td1)
+
+            const td2 = document.createElement("td")
+            td2.innerText = juryvote.discordName
+            tr.appendChild(td2)
+
+            if (countryLabelVisible) {
+                const td3 = document.createElement("td")
+                td3.innerText = juryvote.country
+                tr.appendChild(td3)
+            }
+
+            const td5 = document.createElement("td")
+            td5.innerText = juryvote.points.map(r => `${r.points}p: ${r.name}`).join("\n")
+            tr.appendChild(td5)
+
+            document.getElementById("allJuryVotes").appendChild(tr)
+        })
+
+        function sort(method) {
+            lastSortMethod = method
+            if (method === "total") {
+                results.sort(function (a, b) {
+                    return (b.showTele + b.jury) - (a.showTele + a.jury)
+                })
+            } else if (method === "tele") {
+                results.sort(function (a, b) {
+                    return b.showTele - a.showTele
+                })
+            } else if (method === "jury") {
+                results.sort(function (a, b) {
+                    return b.jury - a.jury
+                })
+            }
+
+            document.getElementById("resultsTable").innerHTML = "";
+
+            const tr = document.createElement("tr");
+
+            let td = document.createElement("td")
+            td.innerText = "#"
+            tr.appendChild(td)
+
+            let td1 = document.createElement("td")
+            td1.innerText = "Name"
+            tr.appendChild(td1)
+
+            let td2 = document.createElement("td")
+            td2.innerText = "Tele points"
+            td2.classList.add("clickable")
+            td2.onclick = function () {
+                sort("tele")
+            }
+            tr.appendChild(td2)
+
+            let td3 = document.createElement("td")
+            td3.innerText = "Jury points"
+            td3.classList.add("clickable")
+            td3.onclick = function () {
+                sort("jury")
+            }
+            tr.appendChild(td3)
+
+            let td4 = document.createElement("td")
+            td4.innerText = "Total points"
+            td4.classList.add("clickable")
+            td4.onclick = function () {
+                sort("total")
+            }
+            tr.appendChild(td4)
+
+            document.getElementById("resultsTable").appendChild(tr)
+
+            results.forEach((element, i) => {
+                const tr = document.createElement("tr");
+
+                let td = document.createElement("td")
+                td.innerText = i + 1
+                tr.appendChild(td)
+
+                let td1 = document.createElement("td")
+                td1.innerText = element.name
+                tr.appendChild(td1)
+
+                let td2 = document.createElement("td")
+                td2.innerText = Math.round(element.showTele)
+                tr.appendChild(td2)
+
+                let td3 = document.createElement("td")
+                td3.innerText = element.jury
+                tr.appendChild(td3)
+
+                let td4 = document.createElement("td")
+                td4.innerText = Math.round(element.showTele) + element.jury
+                tr.appendChild(td4)
+
+                document.getElementById("resultsTable").appendChild(tr)
+            })
+        }
+
+        sort("total")
+
+        let totalVotingOptions = document.querySelectorAll(".votingOption").length - 1
+        function addNewVotingOption() {
+            totalVotingOptions++
+
+            const input = document.createElement("input")
+            input.type = "text"
+            input.placeholder = "Name"
+            input.setAttribute("votingOption", totalVotingOptions)
+            input.classList.add("votingOption")
+            document.getElementById("votingOptions").appendChild(input)
+
+            const input2 = document.createElement("input")
+            input2.type = "url"
+            input2.placeholder = "Image URL"
+            input2.id = "votingOptionUrl-" + totalVotingOptions
+            document.getElementById("votingOptions").appendChild(input2)
+
+            document.getElementById("votingOptions").appendChild(document.createElement("br"))
+        }
+
+        function changeVotingOptions() {
+            const options = []
+            document.querySelectorAll(".votingOption").forEach(element => {
+                if (element.value) {
+                    options.push({ name: element.value, image: document.getElementById("votingOptionUrl-" + element.getAttribute("votingOption")).value })
+                }
+            })
+            fetch("/api/voting-manage/change_voting_options", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ options: options, roesc: "<%= votingData.roesc %>", voting: "<%= votingData.link %>" })
+            }).then(res => location.reload())
+        }
+
+        let totalJuryOptions = document.querySelectorAll(".juryVotingPointOption").length - 1
+        function addNewJuryPointOption() {
+            totalJuryOptions++
+
+            const input2 = document.createElement("input")
+            input2.type = "number"
+            input2.placeholder = "Points"
+            input2.classList.add("juryVotingPointOption")
+            input2.classList.add("smallinput")
+            document.getElementById("juryVotingPointOptions").appendChild(input2)
+        }
+
+        function saveJuryPointOptions() {
+            const options = []
+            document.querySelectorAll(".juryVotingPointOption").forEach(element => {
+                if (element.value) {
+                    options.push(element.value)
+                }
+            })
+            fetch("/api/voting-manage/change_jury_voting_points", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ points: options, roesc: "<%= votingData.roesc %>", voting: "<%= votingData.link %>" })
+            }).then(res => location.reload())
+        }
+
+        function loadListForJury() {
+            document.getElementById("loadJuryListButton").style.display = "none";
+            fetch("/api/voting-manage/get_list_for_jury?roesc=<%= votingData.roesc %>").then(res => res.json()).then(res => {
+                if (res.success) {
+                    res.users.forEach(element => {
+                        if (!juries.find(r => r.id === element.id || r.username === `${element.name}#${element.discriminator}`)) {
+                            const button = document.createElement("button")
+                            button.innerText = `${element.name}#${element.discriminator}`
+                            button.setAttribute("jury-id", element.id)
+                            button.style.color = element.color === "#000000" ? "#FFFFFF" : element.color
+                            button.onclick = function () {
+                                if (button.getAttribute("selected") === "yes") {
+                                    button.setAttribute("selected", "no")
+                                    button.style.backgroundColor = "#2A2A2A"
+                                } else {
+                                    button.setAttribute("selected", "yes")
+                                    button.style.backgroundColor = "#005200"
+                                }
+                            }
+                            document.getElementById("allJuriesChooser").appendChild(button)
+                        }
+                    })
+                    document.getElementById("submitJuryList").style.display = "inline";
+                }
+            })
+        }
+
+        function saveJuriesFromList() {
+            let juriesToAdd = []
+            document.querySelectorAll("[jury-id]").forEach(element => {
+                if (element.getAttribute("selected") === "yes") {
+                    juriesToAdd.push({ id: element.getAttribute("jury-id"), username: element.innerText })
+                }
+            })
+            fetch("/api/voting-manage/add_juries_bulk", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ roesc: "<%= votingData.roesc %>", voting: "<%= votingData.link %>", users: juriesToAdd })
+            }).then(res => location.reload())
+        }
+
+        function removeJury(id) {
+            fetch("/api/voting-manage/delete_jury", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ roesc: "<%= votingData.roesc %>", voting: "<%= votingData.link %>", id: id })
+            }).then(res => location.reload())
+        }
+
+        function regenerateApiKey() {
+            fetch("/api/voting-manage/regenerate_api_key", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ roesc: "<%= votingData.roesc %>", voting: "<%= votingData.link %>" })
+            }).then(res => location.reload())
+        }
+
+        function resultsOneToOne() {
+            results.forEach(element => {
+                element.showTele = element.tele
+            })
+            sort(lastSortMethod)
+        }
+
+        function resultsFiftyFifty() {
+            const multiplier = totalJuryPoints / totalTelePoints
+            results.forEach(element => {
+                element.showTele = element.tele * multiplier
+            })
+            sort(lastSortMethod)
+        }
+    </script>
+</body>
+
+</html>

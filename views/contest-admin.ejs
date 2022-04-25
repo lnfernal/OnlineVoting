@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= roescData.name %> control panel
+    </title>
+    <link rel="stylesheet" href="/main.css">
+    <script src="/navigation.js" defer></script>
+</head>
+
+<body>
+    <div id="mainDiv">
+        <div id="topbar">
+            <h3 id="pageName">
+                <%= roescData.name %> control panel
+            </h3>
+            <div id="loggedInAs">
+                <img class="avatar"
+                    src="https://cdn.discordapp.com/avatars/<%= discordData.id %>/<%= discordData.avatar %>.png" alt="">
+                <%= discordData.username %>#<%= discordData.discriminator %> <a href="/logout">Log out</a>
+            </div>
+        </div>
+
+        <div id="mainContent">
+            <nav>
+                <ul>
+                    <li><button>Current Votings</button></li>
+                    <li><button>New Voting</button></li>
+                    <li><button>Settings</button></li>
+                </ul>
+            </nav>
+            <div id="content">
+
+                <div id="p_new_voting">
+                    <h1>New voting</h1>
+                    <form action="/api/contest-admin/new_voting" method="POST">
+                        <input type="hidden" name="contestname" value="<%= roescData.link %>">
+                        <label for="name">Name: </label> <input type="text" name="name" id="name"><br>
+                        <label for="link">Link: </label> /<%= roescData.link %>/<input type="text" name="link"
+                                id="link"><br>
+                            <button type="submit">Create</button>
+                    </form>
+                </div>
+
+                <div id="p_settings">
+                    <h1>Change contest page voting</h1>
+                    <form action="/api/contest-admin/change_contest_page_voting" method="POST">
+                        <input type="hidden" name="roesc" value=<%=roescData.link %>>
+                        <label for="voting">Voting:</label> <select name="voting">
+                            <% votings.forEach(voting=> { %>
+                                <option value="<%= voting.link %>">
+                                    <%= voting.name %>
+                                </option>
+                                <% }) %>
+                        </select><br>
+                        <button type="submit">Submit</button>
+                    </form>
+
+                    <h1 style="margin-bottom: 0;">Change country detection URL</h1>
+                    <p style="margin-top: 0;">Leave blank to remove</p>
+                    <form action="/api/contest-admin/change_country_detection_url" method="POST">
+                        <input type="hidden" name="roesc" value="<%= roescData.link %>">
+                        <label for="link">Link: </label> <input type="url" name="link"
+                            value="<%= countryGetLink.link %>"><br>
+                        <label for="guild">Server ID: </label> <input type="text" name="guild"
+                            value="<%= countryGetLink.guild %>"><br>
+                        <button type="submit">Submit</button>
+                    </form>
+
+                    <h1>Change jury list URL</h1>
+                    <form action="/api/contest-admin/change_jury_list_url" method="POST">
+                        <input type="hidden" name="roesc" value="<%= roescData.link %>">
+                        <label for="link">Link: </label> <input type="url" name="link"
+                            value="<%= juryListLink.link %>"><br>
+                        <label for="guild">Server ID: </label> <input type="text" name="guild"
+                            value="<%= juryListLink.guild %>"><br>
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+
+                <div id="p_current_votings">
+                    <h1>All votings</h1>
+                    <table>
+                        <tr>
+                            <td>#</td>
+                            <td>Full Name</td>
+                            <td>Voting Link</td>
+                            <td>Manage Link</td>
+                            <td>Actions</td>
+                        </tr>
+                        <% votings.forEach((voting,i)=> { %>
+                            <tr>
+                                <td>
+                                    <%= i+1 %>
+                                </td>
+                                <td>
+                                    <%= voting.name %>
+                                </td>
+                                <td>
+                                    <a href="/<%= roescData.link %>/<%= voting.link %>">
+                                        <%= voting.link %>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="/manage/<%= roescData.link %>/<%= voting.link %>/">
+                                        Click
+                                    </a>
+                                </td>
+                                <td>
+                                    <!-- <button class="votingChangeNameButton" voting=<%=voting.link %>>Change name</button> -->
+                                    <button class="votingDeleteButton" voting="<%= voting.link %>">Delete</button>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll(".votingDeleteButton").forEach(button => {
+            button.onclick = function () {
+                fetch("/api/contest-admin/delete_voting", { //TODO
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ name: button.getAttribute("voting"), roesc: "<%= roescData.link %>" })
+                }).then(res => location.reload())
+            }
+        })
+
+        // document.querySelectorAll(".roescChangeNameButton").forEach(button => {
+        //     let name = button.getAttribute("roesc")
+        //     button.onclick = function () {
+        //         document.getElementById("renameDiv").style.display = "block";
+        //         document.getElementById("renameOldName").value = name;
+        //     }
+        // })
+    </script>
+</body>
+
+</html>

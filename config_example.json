@@ -1,0 +1,40 @@
+{
+    "port": 3001,
+    "mode": "local",
+    "local_discord": {
+        "oauth_link": "",
+        "client_id": "123",
+        "client_secret": "abc",
+        "redirect_uri": "http://localhost:3001/api/oauth/callback"
+    },
+    "server_discord": {
+        "oauth_link": "",
+        "client_id": "123",
+        "client_secret": "abc",
+        "redirect_uri": "http://localhost:3001/api/oauth/callback"
+    },
+    "admins": [
+        "279313154587099138"
+    ],
+    "owner": "Gabys",
+    "verification_game_link": "https://google.com",
+    "game_verification_password": "Heyya",
+    "domain": "gabys.xyz",
+    "subdomain": "vote.gabys.xyz",
+    "mongo_db_url": "",
+    "default_voting_settings": {
+        "background": {
+            "color": "#0000FF",
+            "image": "http://localhost:3001/bg.jpg"
+        },
+        "main_window": {
+            "font_color": "#FFFFFF",
+            "background_color": "#0000AA",
+            "button_font_color": "#FFFFFF",
+            "button_background_color": "#000055"
+        },
+        "option": {
+            "background_color": "#FF0000"
+        }
+    }
+}

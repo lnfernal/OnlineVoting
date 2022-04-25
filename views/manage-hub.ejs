@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Hub</title>
+    <link rel="stylesheet" href="/main.css">
+    <script src="/navigation.js" defer></script>
+</head>
+
+<body>
+    <div id="mainDiv">
+        <div id="topbar">
+            <h3 id="pageName">Manage Hub</h3>
+            <div id="loggedInAs">
+                <img class="avatar"
+                    src="https://cdn.discordapp.com/avatars/<%= discordData.id %>/<%= discordData.avatar %>.png" alt="">
+                <%= discordData.username %>#<%= discordData.discriminator %> <a href="/logout">Log out</a>
+            </div>
+        </div>
+
+        <div id="mainContent">
+            <nav>
+                <ul>
+                    <li><button>Your votings</button></li>
+                </ul>
+            </nav>
+            <div id="content">
+
+                <div id="p_your_votings">
+                    <h1>Your votings</h1>
+                    <% votings.forEach(voting=> { %>
+                        <a class="abutton chooserbutton" href="/manage/<%= voting.roesc %>/<%= voting.link %>/">
+                            <%= voting.roesc %>: <%= voting.name %>
+                        </a>
+                        <% }) %>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

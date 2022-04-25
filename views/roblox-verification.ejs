@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox verification</title>
+    <style>
+        body {
+            --background-color: <%=designOptions.background.color %>;
+            --background-image: url(<%=designOptions.background.image %>);
+            --font-color: <%=designOptions.main_window.font_color %>;
+            --main-background-color: <%=designOptions.main_window.background_color %>;
+            --button-font-color: <%=designOptions.main_window.button_font_color %>;
+            --button-background-color: <%=designOptions.main_window.button_background_color %>;
+            --option-background-color: <%=designOptions.option.background_color %>;
+        }
+    </style>
+    <link rel="stylesheet" href="/voting.css">
+</head>
+
+<body>
+    <div id="container">
+        <div id="main">
+            <div>
+                <p>Logged in as <img class="avatar"
+                        src="https://cdn.discordapp.com/avatars/<%= discordData.id %>/<%= discordData.avatar %>.png"
+                        alt="">
+                    <%= discordData.username %>#<%= discordData.discriminator %> <a href="/logout">Log out</a>
+                </p>
+            </div>
+            <div id="chooseRobloxVerificationMethod">
+                <h3>How would you want to verify your Roblox account?</h3>
+                <button onclick="verifyRover()">Rover</button> <button onclick="verifyBloxlink()">Bloxlink</button>
+                <% if (verificationGameLink !=="" ) { %>
+                    <button onclick="verifyRoblox()">Roblox game</button>
+                    <% } %>
+            </div>
+
+            <div id="verifyRoblox" style="display: none;">
+                <h3>What's your Roblox username</h3>
+                <input id="robloxUsername" type="text"><br>
+                <button onclick="verifyRobloxRedirect()">Next</button>
+            </div>
+
+            <div id="verifyRobloxRefresh" style="display: none;">
+                <h3>Join the Roblox game that you got redirected to, press the verify button and refresh this page</h3>
+            </div>
+
+            <div id="loading" style="display: none;">
+                <h3>Loading</h3>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchDivs(oldDiv, newDiv) {
+            document.getElementById(oldDiv).style.display = "none";
+            document.getElementById(newDiv).style.display = "block";
+        }
+
+        function verifyRoblox() {
+            switchDivs("chooseRobloxVerificationMethod", "verifyRoblox")
+        }
+
+        function verifyRover() {
+            fetch("/api/voting/verify_rover", { method: "POST" }).then(res => {
+                location.reload();
+            })
+        }
+
+        function verifyBloxlink() {
+            fetch("/api/voting/verify_bloxlink", { method: "POST" }).then(res => {
+                location.reload();
+            })
+        }
+
+        function verifyRobloxRedirect() {
+            const username = document.getElementById("robloxUsername").value;
+            if (username) {
+                switchDivs("verifyRoblox", "verifyRobloxRefresh")
+                window.open("<%= verificationGameLink %>")
+                fetch("/api/voting/verify_roblox", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username: username })
+                })
+            }
+        }
+    </script>
+</body>
+
+</html>

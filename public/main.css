@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+html {
+    height: 100%;
+}
+
+body {
+    background-color: #1D1D1D;
+    color: #DDD;
+    font-family: "Roboto", sans-serif;
+    text-align: center;
+    margin: 0;
+    height: 100%;
+
+    -moz-transform: scale(1.3); /* for Firefox, default 1*/
+    zoom:130%; /* For Chrome, IE, default 100%*/
+}
+
+.avatar {
+    height: 20px;
+    border-radius: 100%;
+    position: relative;
+    top: 5px;
+}
+
+a {
+    color: #DDD;
+    text-decoration: underline;
+}
+
+input, select {
+    border-radius: 5px;
+    background-color: #2A2A2A;
+    border: 0;
+    color: #DDD;
+    padding: 2px;
+    margin: 2px;
+}
+
+button, .abutton {
+    border-radius: 5px;
+    background-color: #2A2A2A;
+    color: #DDD;
+    border: 0;
+    padding: 5px;
+}
+
+.abutton {
+    text-decoration: none;
+}
+
+.chooserbutton {
+    margin: 5px;
+}
+
+td {
+    border: 1px solid black;
+}
+
+table {
+    border-collapse: collapse;
+    min-width: 60%;
+    margin: 5px auto;
+}
+
+#topbar {
+    background-color: #121212;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex: 0 1 auto;
+}
+
+#pageName {
+    /* text-align: left;
+    float: left; */
+    margin: 7px;
+    margin-left: 20px;
+}
+
+nav {
+    width: 200px;
+    background-color: #171717;
+    height: 100%;
+}
+
+#mainDiv {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+#mainContent {
+    flex: 1 1 auto;
+    display: flex;
+}
+
+#content {
+    flex: 1 1 auto;
+}
+
+li {
+    width: 100%;
+    list-style-type: none;
+    text-align: left;
+}
+
+ul {
+    padding: 0;
+}
+
+li button {
+    cursor: pointer;
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: 0;
+    text-align: left;
+    padding-left: 20px;
+    border-radius: 0;
+    font-family: "Roboto", sans-serif;
+}
+
+#loggedInAs {
+    padding-right: 20px;
+}
+
+.form tr td:nth-child(1) {
+    text-align: right;
+}
+
+.form tr td:nth-child(2) {
+    text-align: left;
+}
+
+.form tr td {
+    border: 0;
+    width: 50%;
+}
+
+.form tr td input {
+    min-width: 180px;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.smallinput {
+    max-width: 50px;
+}
+
+.defaultul > li {
+    text-align: center;
+}
+
+#allJuriesChooser > button {
+    margin: 5px;
+}
+
+.red {
+    color: red;
+}
+
+.smallabutton {
+    font-size: 60%;
+    cursor: pointer;
+}

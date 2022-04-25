@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin page</title>
+    <link rel="stylesheet" href="/main.css">
+    <script src="/navigation.js" defer></script>
+</head>
+
+<body>
+    <div id="mainDiv">
+        <div id="topbar">
+            <h3 id="pageName">Admin page</h3>
+            <div id="loggedInAs">
+                <img class="avatar"
+                    src="https://cdn.discordapp.com/avatars/<%= discordData.id %>/<%= discordData.avatar %>.png" alt="">
+                <%= discordData.username %>#<%= discordData.discriminator %> <a href="/logout">Log out</a>
+            </div>
+            <!-- <div style="clear:both;"></div> -->
+        </div>
+
+        <div id="mainContent">
+            <nav>
+                <ul>
+                    <li><button>Current Roescs</button></li>
+                    <li><button>New Roesc</button></li>
+                    <li><button>Homepage Roesc</button></li>
+                    <li><button>Settings</button></li>
+                    <li><button>Redirects</button></li>
+                </ul>
+            </nav>
+            <div id="content">
+
+                <div id="p_new_roesc">
+                    <h1>New roesc</h1>
+                    <form action="/api/admin/new_roesc" method="POST">
+                        <label for="name">Name: </label> <input type="text" name="name" id="name"><br>
+                        <label for="link">Link: </label> <input type="text" name="link" id="link"><br>
+                        <button type="submit">Create</button>
+                    </form>
+                </div>
+
+                <div id="p_homepage_roesc">
+                    <h1>Change homepage voting</h1>
+                    <form action="/api/admin/change_homepage_voting" method="POST">
+                        <label for="roesc">Roesc: </label> <select name="roesc">
+                            <% roescData.forEach(roesc=> { %>
+                                <option value="<%= roesc.link %>">
+                                    <%= roesc.name %>
+                                </option>
+                                <% }) %>
+                        </select><br>
+                        <label for="voting">Voting:</label> <input type="text" name="voting"><br>
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+
+                <div id="p_current_roescs">
+                    <h1>Current roescs</h1>
+                    <table>
+                        <tr>
+                            <td>#</td>
+                            <td>Full Name</td>
+                            <td>Link</td>
+                            <td>Actions</td>
+                        </tr>
+                        <% roescData.forEach((roesc,i)=> { %>
+                            <tr>
+                                <td>
+                                    <%= i+1 %>
+                                </td>
+                                <td>
+                                    <%= roesc.name %>
+                                </td>
+                                <td>
+                                    <a href="/contest/<%= roesc.link %>">
+                                        <%= roesc.link %>
+                                    </a>
+                                </td>
+                                <td>
+                                    <button class="roescChangeNameButton" roesc=<%=roesc.link %>>Change name</button>
+                                    <button class="roescDeleteButton" roesc="<%= roesc.link %>">Delete</button>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </table>
+                    <div id="renameDiv" style="display: none;">
+                        <form action="/api/admin/rename" method="POST">
+                            <input type="hidden" id="renameOldName" name="oldname">
+                            <label for="name">New name: </label> <input type="text" name="name"><br>
+                            <button type="submit">Rename</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="p_settings">
+                    <form action="/api/admin/set_roblox_down" method="POST">
+                        <label for="down">Is roblox down: </label> <input type="checkbox" name="down"><br>
+                        <button type="submit">Update</button>
+                    </form>
+                </div>
+
+                <div id="p_redirects">
+                    <h1>Add new</h1>
+                    <form action="/api/admin/new_redirect_token" method="post">
+                        <label for="redirect_url">Redirect to: </label> <input type="url" name="redirect_url"><br>
+                        <label for="require_roblox">Require Roblox: </label> <input type="checkbox"
+                            name="require_roblox"><br>
+                        <button type="submit">Create</button>
+                    </form>
+                    <h1>Current redirects</h1>
+                    <table>
+                        <tr>
+                            <td>#</td>
+                            <td>Token</td>
+                            <td>Redirect</td>
+                            <td>Roblox required?</td>
+                        </tr>
+                        <% redirects.forEach((redirect,i)=> { %>
+                            <tr>
+                                <td>
+                                    <%= i+1 %>
+                                </td>
+                                <td>
+                                    <%= redirect.token %>
+                                </td>
+                                <td>
+                                    <%= redirect.redirect %>
+                                </td>
+                                <td>
+                                    <%= redirect.requireRoblox %>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </table>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll(".roescDeleteButton").forEach(button => {
+            button.onclick = function () {
+                fetch("/api/admin/delete_roesc", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ name: button.getAttribute("roesc") })
+                }).then(res => location.reload())
+            }
+        })
+
+        document.querySelectorAll(".roescChangeNameButton").forEach(button => {
+            let name = button.getAttribute("roesc")
+            button.onclick = function () {
+                document.getElementById("renameDiv").style.display = "block";
+                document.getElementById("renameOldName").value = name;
+            }
+        })
+    </script>
+</body>
+
+</html>
