@@ -20,7 +20,7 @@
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "ejs": "^3.1.8",
-    "express": "^4.17.1",
+    "express": "^4.18.1",
     "monk": "^7.3.4",
     "noblox.js": "^4.12.0",
     "node-fetch": "^2.6.5",
